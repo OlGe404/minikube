@@ -6,7 +6,7 @@ Checkout https://minikube.sigs.k8s.io/ for more information.
 For general prerequisites of minikube, see https://minikube.sigs.k8s.io/docs/start/#what-youll-need.
 
 To fullfill the prerequisites for the automation in this repo, run these commands to install
-the necessary packages and ansible collections:
+the necessary packages:
 
 ```
 python3 -m pip install --upgrade --user -r requirements.txt
