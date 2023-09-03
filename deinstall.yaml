@@ -1,0 +1,21 @@
+---
+- name: Deinstall minikube
+  hosts: localhost
+  gather_facts: false
+  vars_files: vars.yaml
+  vars_prompt:
+    - name: sudo_pass
+      prompt: "Provide your sudo password to start the deinstallation"
+
+  tasks:
+    - name: Stop minikube
+      ansible.builtin.command: minikube stop
+
+    - name: Delete minikube
+      ansible.builtin.command: minikube delete --all
+
+    - name: Remove the minikube binary
+      become: true
+      ansible.builtin.file:
+        path: /usr/local/bin/minikube
+        state: absent

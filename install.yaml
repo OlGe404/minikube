@@ -1,0 +1,45 @@
+---
+- name: Install minikube {{ minikube_version }}
+  hosts: localhost
+  gather_facts: false
+  vars_files: vars.yaml
+  vars_prompt:
+    - name: sudo_pass
+      prompt: "Provide your sudo password to start the installation"
+
+  tasks:
+    - name: Download minikube
+      become: true
+      ansible.builtin.get_url:
+        url: "https://github.com/kubernetes/minikube/releases/download/{{ minikube_version }}/minikube-linux-amd64"
+        dest: /usr/local/bin/minikube
+        mode: "0755"
+        owner: "{{ ansible_user }}"
+        group: root
+
+    - name: Get minikube version
+      ansible.builtin.command: minikube version
+      register: minikube_cli
+
+    - name: Verify that specified version == installed version
+      ansible.builtin.assert:
+        that: minikube_version in minikube_cli.stdout
+        fail_msg: "Something went wrong. Use the deinstall.yaml playbook to cleanup and re-run this playbook for a fresh setup."
+        success_msg: "minikube {{ minikube_version }} was installed successfully."
+
+    - name: Start minikube
+      ansible.builtin.command: minikube start
+
+    - name: Setup minikube kubectl
+      ansible.builtin.command: minikube kubectl get pods
+
+    - name: Create alias for "minikube kubectl"
+      become: true
+      ansible.builtin.blockinfile:
+        path: /etc/profile.d/minikube.sh
+        create: true
+        owner: "{{ ansible_user }}"
+        group: root
+        mode: "0755"
+        block: |
+          alias minik='minikube kubectl --'
