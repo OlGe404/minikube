@@ -15,8 +15,13 @@
     - name: Delete minikube
       ansible.builtin.command: minikube delete --all
 
-    - name: Remove the minikube binary
+    - name: Remove created files
       become: true
+      loop:
+        - /usr/local/bin/minikube
+        - /etc/systemd/system/minikube.service
+        - /usr/local/etc/bash_completion.d/minikube-completion
+        - /etc/profile.d/minikube.sh
       ansible.builtin.file:
-        path: /usr/local/bin/minikube
+        path: "{{ item }}"
         state: absent
