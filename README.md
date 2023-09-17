@@ -30,7 +30,8 @@ See `minikube help` for a list of all available subcommands.
 The kubernetes-dashboard is bundled with minikube and can be started by running `minikube dashboard`.
 
 ### Bash aliases
-The playbook creates aliases to ease the usage of `minikube` and `minikube kubectl` commands.
+The playbook creates the bash autocompletion config for `minikube` commands 
+and aliases to ease the usage of `minikube` and `minikube kubectl` commands.
 
 The following aliases are created:
 
