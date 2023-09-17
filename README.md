@@ -20,9 +20,11 @@ Run the following commands to start the installation:
 
 ## Start/Stop minikube
 After the installation, minikube will be started but it won't be added to the autostart,
-unless `minikube_autostart: true` is set in the [vars.yaml](vars.yaml) file.
+unless `minikube_autostart: true`. You can provide it by adding `-e minukube_autostart=true`
+to the `ansible-playbook install.yaml` command.
 
-To start minikube, run `minikube start`. To stop minikube, run `minikube stop`.
+To start minikube, run `minikube start`. To stop minikube, run `minikube stop`. To delete the
+current cluster, run `minikube delete`.
 
 See `minikube help` for a list of all available subcommands.
 
