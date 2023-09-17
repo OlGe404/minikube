@@ -65,6 +65,7 @@
         owner: "{{ ansible_user }}"
         group: root
         mode: "0755"
+        marker: "{{ ansible_blockinfile_marker }}"
         block: "{{ minikube_bash_completion.stdout }}"
 
     - name: Create alias for "minikube kubectl"
@@ -75,6 +76,7 @@
         owner: "{{ ansible_user }}"
         group: root
         mode: "0755"
+        marker: "{{ ansible_blockinfile_marker }}"
         block: |
           alias minik='minikube kubectl --'
 
@@ -95,6 +97,7 @@
             owner: "{{ ansible_user }}"
             group: root
             mode: "0755"
+            marker: "{{ ansible_blockinfile_marker }}"
             block: |
               [Unit]
               Description=Start minikube
