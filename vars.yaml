@@ -6,3 +6,4 @@ ansible_sudo_pass: "{{ sudo_pass }}"
 ansible_user: "{{ lookup('env', 'USER') }}"
 
 minikube_version: v1.31.2
+minikube_autostart: false

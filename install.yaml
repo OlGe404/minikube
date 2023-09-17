@@ -1,3 +1,4 @@
+# code: language=ansible
 ---
 - name: Install minikube {{ minikube_version }}
   hosts: localhost
@@ -27,6 +28,14 @@
         fail_msg: "Something went wrong. Use the deinstall.yaml playbook to cleanup and re-run this playbook for a fresh setup."
         success_msg: "minikube {{ minikube_version }} was installed successfully."
 
+    - name: Ensure docker is started
+      become: true
+      ansible.builtin.systemd:
+        name: docker.service
+        state: started
+      register: docker_state
+      until: docker_state.status.ActiveState == "active"
+
     - name: Start minikube
       ansible.builtin.command: minikube start
 
@@ -43,3 +52,43 @@
         mode: "0755"
         block: |
           alias minik='minikube kubectl --'
+
+    - name: Add minikube to autostart
+      when: minikube_autostart
+      block:
+        - name: Add docker.service to autostart, because minikube depends on it
+          become: true
+          ansible.builtin.systemd:
+            name: docker.service
+            enabled: true
+
+        - name: Create systemd conf for minikube.service
+          become: true
+          ansible.builtin.blockinfile:
+            path: /etc/systemd/system/minikube.service
+            create: true
+            owner: "{{ ansible_user }}"
+            group: root
+            mode: "0755"
+            block: |
+              [Unit]
+              Description=Start minikube
+              After=docker.service
+
+              [Service]
+              Type=oneshot
+              ExecStart=/usr/local/bin/minikube start
+              ExecStop=/usr/local/bin/minikube stop
+              RemainAfterExit=true
+              StandardOutput=journal
+              User={{ ansible_user }}
+              Group={{ ansible_user }}
+
+              [Install]
+              WantedBy=multi-user.target
+
+        - name: Add minikube.service to autostart
+          become: true
+          ansible.builtin.systemd:
+            name: minikube.service
+            enabled: true

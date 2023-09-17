@@ -19,7 +19,8 @@ Run the following commands to start the installation:
   * Ensure the client works with <code>minik get pods</code>
 
 ## Start/Stop minikube
-After the installation, minikube will be started but it won't be added to the autostart.
+After the installation, minikube will be started but it won't be added to the autostart,
+unless `minikube_autostart: true` is set in the [vars.yaml](vars.yaml) file.
 
 To start minikube, run `minikube start`. To stop minikube, run `minikube stop`.
 
