@@ -28,7 +28,7 @@ current cluster, run `minikube delete`.
 
 See `minikube help` for a list of all available subcommands.
 
-## WebUI Access
+## Web UI Access
 The kubernetes-dashboard is bundled with minikube and can be started by running `minikube dashboard`.
 
 ### Bash aliases
