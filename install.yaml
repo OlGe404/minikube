@@ -42,7 +42,7 @@
       register: minikube_status
 
     - name: Start minikube
-      when: minikube_status.rc == 7 # rc 7 == minikube is stopped
+      when: '"host: Running" not in minikube_status.stdout'
       ansible.builtin.command: minikube start
 
     - name: Setup minikube kubectl
