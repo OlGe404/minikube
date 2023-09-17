@@ -25,3 +25,8 @@
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
+
+    - name: Reload systemd conf
+      become: true
+      ansible.builtin.systemd:
+        daemon_reload: true

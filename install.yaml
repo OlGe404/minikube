@@ -1,6 +1,6 @@
 # code: language=ansible
 ---
-- name: Install minikube {{ minikube_version }}
+- name: Download and setup minikube
   hosts: localhost
   gather_facts: false
   vars_files: vars.yaml
@@ -9,7 +9,7 @@
       prompt: "Provide your sudo password to start the installation"
 
   tasks:
-    - name: Download minikube
+    - name: Download minikube {{ minikube_version }}
       become: true
       ansible.builtin.get_url:
         url: "https://github.com/kubernetes/minikube/releases/download/{{ minikube_version }}/minikube-linux-amd64"
@@ -77,8 +77,10 @@
         group: root
         mode: "0755"
         marker: "{{ ansible_blockinfile_marker }}"
-        block: |
-          alias minik='minikube kubectl --'
+        block: "alias minik='minikube kubectl --'"
+
+    - name: Enable metrics-server addon for minikube dashboard
+      ansible.builtin.command: minikube addons enable metrics-server
 
     - name: Add minikube to autostart
       when: minikube_autostart
@@ -120,3 +122,4 @@
           ansible.builtin.systemd:
             name: minikube.service
             enabled: true
+            daemon_reload: true
