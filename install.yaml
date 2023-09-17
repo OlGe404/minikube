@@ -25,7 +25,7 @@
     - name: Verify that specified version == installed version
       ansible.builtin.assert:
         that: minikube_version in minikube_cli.stdout
-        fail_msg: "Something went wrong. Use the deinstall.yaml playbook to cleanup and re-run this playbook for a fresh setup."
+        fail_msg: "Something went wrong. Use the deinstall.yaml playbook to cleanup and re-run this playbook for a fresh install."
         success_msg: "minikube {{ minikube_version }} was installed successfully."
 
     - name: Ensure docker is started
