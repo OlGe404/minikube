@@ -36,11 +36,36 @@
       register: docker_state
       until: docker_state.status.ActiveState == "active"
 
+    - name: Get minikube status
+      ansible.builtin.command: minikube status
+      ignore_errors: true
+      register: minikube_status
+
     - name: Start minikube
+      when: minikube_status.rc == 7 # rc 7 == minikube is stopped
       ansible.builtin.command: minikube start
 
     - name: Setup minikube kubectl
       ansible.builtin.command: minikube kubectl get pods
+
+    - name: Ensure bash-completion is installed
+      become: true
+      ansible.builtin.package:
+        name: bash-completion
+
+    - name: Get minikube bash completion output
+      ansible.builtin.command: minikube completion bash
+      register: minikube_bash_completion
+
+    - name: Create minikube bash completion file
+      become: true
+      ansible.builtin.blockinfile:
+        path: /usr/local/etc/bash_completion.d/minikube-completion
+        create: true
+        owner: "{{ ansible_user }}"
+        group: root
+        mode: "0755"
+        block: "{{ minikube_bash_completion.stdout }}"
 
     - name: Create alias for "minikube kubectl"
       become: true
