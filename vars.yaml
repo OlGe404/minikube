@@ -5,8 +5,10 @@ ansible_become_method: sudo
 ansible_sudo_pass: "{{ sudo_pass }}"
 ansible_user: "{{ lookup('env', 'USER') }}"
 ansible_blockinfile_marker: >-
-  # {mark} ANSIBLE MANAGED BLOCK BY
-  https://raw.githubusercontent.com/OlGe404/minikube/master/install.yaml
+  # {mark} ANSIBLE MANAGED BY https://raw.githubusercontent.com/OlGe404/minikube/master/install.yaml
 
 minikube_version: v1.31.2
+minikube_install_docker: false
 minikube_autostart: false
+minikube_addons:
+  - metrics-server

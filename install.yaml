@@ -28,6 +28,12 @@
         fail_msg: "Something went wrong. Use the deinstall.yaml playbook to cleanup and re-run this playbook for a fresh install."
         success_msg: "minikube {{ minikube_version }} was installed successfully."
 
+    - name: Ensure docker is installed
+      when: minikube_install_docker
+      become: true
+      ansible.builtin.apt:
+        name: docker-ce
+
     - name: Ensure docker is started
       become: true
       ansible.builtin.systemd:
@@ -50,7 +56,7 @@
 
     - name: Ensure bash-completion is installed
       become: true
-      ansible.builtin.package:
+      ansible.builtin.apt:
         name: bash-completion
 
     - name: Get minikube bash completion output
@@ -79,11 +85,52 @@
         marker: "{{ ansible_blockinfile_marker }}"
         block: "alias minik='minikube kubectl --'"
 
-    - name: Enable metrics-server addon for minikube dashboard
-      ansible.builtin.command: minikube addons enable metrics-server
+    - name: "Enable minikube addon(s): {{ minikube_addons | join(', ') }}"
+      loop: "{{ minikube_addons }}"
+      ansible.builtin.command: "minikube addons enable {{ item }}"
+
+    - name: Setup local DNS resolution for minikube cluster
+      tags: dns
+      block:
+        - name: Get minikube ip
+          ansible.builtin.command: minikube ip
+          register: minikube_ip
+
+        - name: Enable minikube ingress + ingress-dns addons
+          loop:
+            - ingress
+            - ingress-dns
+          ansible.builtin.command: "minikube addons enable {{ item }}"
+
+        - name: Configure Network Manager
+          become: true
+          ansible.builtin.blockinfile:
+            path: /etc/NetworkManager/NetworkManager.conf
+            marker: "{{ ansible_blockinfile_marker }}"
+            insertbefore: "^plugins=.*"
+            block: dns=dnsmasq
+
+        - name: Configure dnsmasq
+          become: true
+          ansible.builtin.blockinfile:
+            path: /etc/NetworkManager/dnsmasq.d/minikube.conf
+            create: true
+            owner: "{{ ansible_user }}"
+            group: root
+            mode: "0644"
+            marker: "{{ ansible_blockinfile_marker }}"
+            block: "server=/test/{{ minikube_ip.stdout }}"
+
+        - name: Restart Network Manager
+          become: true
+          ansible.builtin.systemd:
+            name: NetworkManager.service
+            state: restarted
+            daemon_reload: true
 
     - name: Add minikube to autostart
       when: minikube_autostart
+      tags: autostart
       block:
         - name: Add docker.service to autostart, because minikube depends on it
           become: true

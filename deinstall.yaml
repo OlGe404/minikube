@@ -6,7 +6,7 @@
   vars_files: vars.yaml
   vars_prompt:
     - name: sudo_pass
-      prompt: "Provide your sudo password to start the deinstallation"
+      prompt: "Provide your sudo password to start the installation"
 
   tasks:
     - name: Stop minikube
@@ -22,9 +22,20 @@
         - /etc/systemd/system/minikube.service
         - /usr/local/etc/bash_completion.d/minikube-completion
         - /etc/profile.d/minikube.sh
+        - /etc/NetworkManager/dnsmasq.d/minikube.conf
       ansible.builtin.file:
         path: "{{ item }}"
         state: absent
+
+    - name: Remove conf in existing files
+      become: true
+      with_items:
+        - { path: /etc/NetworkManager/NetworkManager.conf, block: dns=dnsmasq}
+      ansible.builtin.blockinfile:
+        path: "{{ item.path }}"
+        state: absent
+        marker: "{{ ansible_blockinfile_marker }}"
+        block: "{{ item.block }}"
 
     - name: Reload systemd conf
       become: true

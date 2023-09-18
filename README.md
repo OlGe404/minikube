@@ -6,11 +6,15 @@ Checkout https://minikube.sigs.k8s.io/ for more information.
 For general prerequisites of minikube, see https://minikube.sigs.k8s.io/docs/start/#what-youll-need.
 
 To fullfill the prerequisites for the automation in this repo, run these commands to install
-the necessary packages:
+the necessary packages and collections:
 
 ```
 python3 -m pip install --upgrade --user -r requirements.txt
+ansible-galaxy collection install -r requirements.yaml
 ```
+
+You can install docker alongside minikube by adding `-e minikube_install_docker=true`
+to the `ansible-playbook install.yaml` command.
 
 ## Installation
 Run the following commands to start the installation:
@@ -18,10 +22,12 @@ Run the following commands to start the installation:
   * Refresh your shell with <code>. /etc/profile.d/minikube.sh</code>
   * Ensure the client works with <code>minik get pods</code>
 
+The installation was tested on Ubuntu 22.04.1 LTS (Jammy Jellyfish).
+
 ## Start/Stop minikube
-After the installation, minikube will be started but it won't be added to the autostart,
-unless `minikube_autostart: true`. You can provide it by adding `-e minukube_autostart=true`
-to the `ansible-playbook install.yaml` command, or by setting it in [vars.yaml](vars.yaml).
+After the installation, minikube will be started but it won't be added to the autostart. 
+You can add it to the autostart by adding `-e minukube_autostart=true` to the `ansible-playbook install.yaml` command,
+or by setting it in the [vars.yaml](vars.yaml) file.
 
 To start minikube, run `minikube start`. To stop minikube, run `minikube stop`. To delete the
 current cluster, run `minikube delete`.
