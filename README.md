@@ -3,8 +3,9 @@ This repo can be used to setup a local kubernetes installation based on minikube
 Checkout https://minikube.sigs.k8s.io/ for more information.
 
 ## Prerequisites
-For general prerequisites of minikube, see https://minikube.sigs.k8s.io/docs/start/#what-youll-need. The
-setup in this repo assumes that you are running on Ubuntu and that you are want to use Docker as driver for minikube.
+For general prerequisites of minikube, see https://minikube.sigs.k8s.io/docs/start/#what-youll-need.
+
+The setup in this repo assumes that you are running on Ubuntu and that you are want to use Docker as driver for minikube.
 You can install docker alongside minikube by adding `-e minikube_install_docker=true` to the `ansible-playbook install.yaml` command.
 
 To fullfill the prerequisites for the automation in this repo, run these commands to install
