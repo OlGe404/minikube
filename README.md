@@ -25,14 +25,14 @@ Run the following commands to start the installation:
 The installation was tested on Ubuntu 22.04.1 LTS (Jammy Jellyfish).
 
 ## Start/Stop minikube
-After the installation, minikube will be started but it won't be added to the autostart. 
-You can add it to the autostart by adding `-e minukube_autostart=true` to the `ansible-playbook install.yaml` command,
+After the installation, minikube will be running but it won't be added to the autostart. 
+You can add it to the autostart by providing `-e minukube_autostart=true` to the `ansible-playbook install.yaml` command,
 or by setting it in the [vars.yaml](vars.yaml) file.
 
 To start minikube, run `minikube start`. To stop minikube, run `minikube stop`. To delete the
 current cluster, run `minikube delete`.
 
-See `minikube help` for a list of all available subcommands.
+See `minikube help` for all available commands.
 
 ## Web UI Access
 The kubernetes-dashboard is bundled with minikube and can be started by running `minikube dashboard`.
@@ -46,6 +46,8 @@ The following aliases are created:
 | Alias | Command               | Notes                                                                   |
 | ----- | --------------------- | ----------------------------------------------------------------------- |
 | minik | `minikube kubectl --` | To run kubectl commands with the included binary, e.g. `minik get pods` |
+
+> Note: If you have `kubectl` installed, you can run those commands as usual instead.
 
 ## Deinstallation
 To deinstall the minikube environment, run <code>ansible-playbook deinstall.yaml</code>
