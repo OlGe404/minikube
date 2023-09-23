@@ -10,5 +10,7 @@ ansible_blockinfile_marker: >-
 minikube_version: v1.31.2
 minikube_install_docker: false
 minikube_autostart: false
+minikube_cpus: 4
+minikube_memory: 7600m
 minikube_addons:
   - metrics-server

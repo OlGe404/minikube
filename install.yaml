@@ -49,7 +49,9 @@
 
     - name: Start minikube
       when: '"host: Running" not in minikube_status.stdout'
-      ansible.builtin.command: minikube start
+      ansible.builtin.command: >
+        minikube start --cpus {{ minikube_cpus }} --memory {{ minikube_memory }}
+        --addons {{ minikube_addons }}
 
     - name: Setup minikube kubectl
       ansible.builtin.command: minikube kubectl get pods
@@ -84,10 +86,6 @@
         mode: "0755"
         marker: "{{ ansible_blockinfile_marker }}"
         block: "alias minik='minikube kubectl --'"
-
-    - name: "Enable minikube addon(s): {{ minikube_addons | join(', ') }}"
-      loop: "{{ minikube_addons }}"
-      ansible.builtin.command: "minikube addons enable {{ item }}"
 
     - name: Setup local DNS resolution for minikube cluster
       tags: dns
